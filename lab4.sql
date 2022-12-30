@@ -69,6 +69,7 @@ default tablespace TS_BKA quota unlimited on TS_BKA
 temporary tablespace TS_BKA_TEMP
 account unlock;
 
+
 grant create session to U1_BKA_PDB
 grant create table to U1_BKA_PDB
 

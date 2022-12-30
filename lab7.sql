@@ -8,17 +8,15 @@ SELECT * FROM v$bgprocess where paddr != hextoraw('00');
 
 --3.	Определите, сколько процессов DBWn работает в настоящий момент.
   show parameter db_writer_processes; 
+  select *from v$process where pname like 'DBW%';
 
 --4.	Получите перечень текущих соединений с экземпляром.
+select * from v$session;
+
 --5.	Определите режимы этих соединений.
---9.	Получите перечень текущих соединений с инстансом. (dedicated, shared). 
-
-select paddr, username, status, server  from v$session where username is not null;
-
-select addr, spid, pname from v$process where background is null;
+select username, server from v$session;
 
 --6.	Определите сервисы (точки подключения экземпляра).
-
 select * from V$SERVICES;  
 
 --7.	Получите известные вам параметры диспетчера и их значений.
@@ -28,46 +26,23 @@ show parameter DISPATCHERS;
 --8.	Укажите в списке Windows-сервисов сервис, реализующий процесс LISTENER.
 --OracleOraDB12Home4TNSListener
 
---10.	LISTENER.ORA
---C:\app\User\product\12.2.0\dbhome_1\network\admin\listener.ora
---11-12. lsnrctl main commands and list of instance services
---lsnrctl status, start, stop
+--9.	Получите перечень текущих соединений с инстансом. (dedicated, shared). 
+select username, server from v$session;
 
---server processes
-select ses.paddr, ses.username, ses.status, ses.server  from v$session ses
-join v$process pr on ses.paddr = pr.addr where ses.username is not null and pr.background is null;
+--10.	Продемонстрируйте и поясните содержимое файла LISTENER.ORA. 
+--C:\app\oracle\product\12.2.0.1\dbhome_1\network\admin\listener.ora
 
---shared connection
+--11.	Запустите утилиту lsnrctl и поясните ее основные команды. 
+--12.	Получите список служб инстанса, обслуживаемых процессом LISTENER. 
+--lsnrctl
+--help --> start, stop,status - ready, blocked, unknown
+--services, version
+--servacls - get access control lists
+--reload - reload the parameter files and SIDs
+--save_config - saves configuration changes to parameter file
 
-create tablespace HDV_DATA
-DataFile 'C:\OracleTrash\HDV_DATA.dbf'
-Size 10 m 
-AutoExtend on next 500k
-MAXSIZE 30 m
 
-create user c##oracle_hdv identified by 1111
-default tablespace HDV_DATA
-Account unlock;
-grant all privileges to c##oracle_hdv;
 
---system
-alter system set dispatchers='(protocol=tcp)(dispatchers=3)(service=shared_conn)';
-select * from v$process where background is null order by pname;
-select * from v$services;
-
-select paddr, username, service_name, server, osuser, machine  from v$session ses where username is not null;
---
-
---oracle_hdv
-declare 
-x int:=1;
-BEGIN
-while x<100000000
-  LOOP
-  x:=x+1;
-  end loop;
-END;
---
 
 
 
